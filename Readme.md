@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Илья Маков](https://up.htmlacademy.ru/javascript/13/user/463727).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Баранов](https://github.com/h4).
 
 ---
 
