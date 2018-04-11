@@ -1,19 +1,39 @@
 'use strict';
 
 
-var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
+var titles = [
+  'Большая уютная квартира',
+  'Маленькая неуютная квартира',
+  'Огромный прекрасный дворец',
+  'Маленький ужасный дворец',
+  'Красивый гостевой домик',
+  'Некрасивый негостеприимный домик',
+  'Уютное бунгало далеко от моря',
+  'Неуютное бунгало по колено в воде'
+];
 
 var buildingTypes = ['palace', 'flat', 'house', 'bungalo'];
 
 var times = ['12:00', '13:00', '14:00'];
 
-var availableFeatures = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var availableFeatures = [
+  'wifi',
+  'dishwasher',
+  'parking',
+  'washer',
+  'elevator',
+  'conditioner'
+];
 
-var availablePhotos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var availablePhotos = [
+  'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
+];
 
 function getRandomIntOutOfRange(min, max) {
-  var length = max - min + 1;
-  var rand = Math.floor(Math.random() * length) + min;
+  var length = max - min;
+  var rand = Math.round(Math.random() * length) + min;
   return rand;
 }
 
@@ -26,29 +46,49 @@ var getRandomArrayElem = function (arr) {
   return arr[index];
 };
 
-var shuffle = function (array) {
-  var currentIndex = array.length;
-  var temporaryValue;
-  var randomIndex;
-
-  while (currentIndex > 0) {
-
-    randomIndex = getRandomInt(array.length);
-    currentIndex--;
-
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
+var getUniqueItem = function (arr, limit) {
+  var randomIdx = getRandomInt(limit);
+  if (arr.includes(randomIdx)) {
+    return getUniqueItem(arr, limit);
   }
 
-  return array;
+  return randomIdx;
 };
 
-var generatedFeatures = [];
+console.log('Результат работы функции getUniqueItem: ' + getUniqueItem(availableFeatures, availableFeatures.length));
 
-for (var j = 0; j < getRandomIntOutOfRange(1, availableFeatures.length); j++) {
-  generatedFeatures.push(availableFeatures[getRandomIntOutOfRange(1, (availableFeatures.length - 1))]);
+function generateRandomSequence(limit) {
+  var result = [];
+  while (result.length < limit) {
+    var randomItem = getUniqueItem(result, limit);
+    result.push(randomItem);
+  }
+
+  return result;
 }
+
+console.log('Результат работы функции getRandomSequence: ' + generateRandomSequence(availableFeatures.length));
+
+var shuffle = function (array) {
+  var randomIndexes = generateRandomSequence(array.length);
+  // console.log('randoxIndexes: ' + randomIndexes);
+  var limitedIndexes = randomIndexes.slice(0, getRandomInt(5));
+  // console.log('limitedIndexes: ' + limitedIndexes);
+  var result = [];
+  for (var i = 0; i < limitedIndexes.length; i++) {
+    var idx = limitedIndexes[i];
+    result[i] = array[idx];
+  }
+  return result;
+};
+
+// console.log('Результат работы функции shuffle: ' + shuffle(availableFeatures));
+
+// var generatedFeatures = [];
+
+// for (var j = 0; j < getRandomIntOutOfRange(0, availableFeatures.length); j++) {
+//   generatedFeatures.push(availableFeatures[getRandomIntOutOfRange(0, (availableFeatures.length - 1))]);
+// }
 
 var ads = [];
 
@@ -67,9 +107,9 @@ for (var i = 0; i < 8; i++) {
       'rooms': getRandomIntOutOfRange(1, 5),
       'checkin': getRandomArrayElem(times),
       'checkout': getRandomArrayElem(times),
-      'features': generatedFeatures,
+      'features': shuffle(availableFeatures),
       'descrtiption': '',
-      'photos': shuffle(availablePhotos)
+      'photos': generateRandomSequence(availablePhotos.length)
     },
 
     'location': {
@@ -80,6 +120,7 @@ for (var i = 0; i < 8; i++) {
 
   ads.push(ad);
 }
+console.log(ad.offer.photos);
 
 document.querySelector('.map').classList.remove('map--faded');
 
@@ -94,14 +135,14 @@ var renderPin = function (object) {
   return pinClone;
 };
 
-var fragment = document.createDocumentFragment();
+var fragmentPins = document.createDocumentFragment();
 
 for (var index = 0; index < ads.length; index++) {
-  fragment.appendChild(renderPin(ads[index]));
+  fragmentPins.appendChild(renderPin(ads[index]));
 }
 
 var pins = document.querySelector('.map__pins');
-pins.appendChild(fragment);
+pins.appendChild(fragmentPins);
 
 
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
@@ -132,19 +173,18 @@ var renderCard = function (card) {
   cardClone.querySelector('.popup__features').textContent = card.offer.features;
   cardClone.querySelector('.popup__description').textContent = card.offer.description;
   cardClone.querySelector('.popup__avatar').src = card.author.avatar;
+  var img = cardClone.querySelector('.popup__photos img');
   for (var q = 0; q < card.offer.photos.length; q++) {
-    cardClone.querySelector('.popup__photos img').src = card.offer.photos[q];
-    var o = cardClone.querySelector('.popup__photos img');
-    cardClone.querySelector('.popup__photos').appendChild(o);
+    var imgClone = img.cloneNode(true);
+    imgClone.src = availablePhotos[card.offer.photos[q]];
+    cardClone.querySelector('.popup__photos').appendChild(imgClone);
   }
-
+  cardClone.querySelector('.popup__photos').removeChild(img);
   return cardClone;
 };
 
-var fragment1 = document.createDocumentFragment();
+var fragmentCard = document.createDocumentFragment();
 
-for (var b = 0; b < ads.length; b++) {
-  fragment1.appendChild(renderCard(ads[b]));
-}
+fragmentCard.appendChild(renderCard(ads[0]));
 
-document.querySelector('.map').appendChild(fragment1);
+document.querySelector('.map').appendChild(fragmentCard);
