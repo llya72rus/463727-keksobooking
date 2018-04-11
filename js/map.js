@@ -55,8 +55,6 @@ var getUniqueItem = function (arr, limit) {
   return randomIdx;
 };
 
-console.log('Результат работы функции getUniqueItem: ' + getUniqueItem(availableFeatures, availableFeatures.length));
-
 function generateRandomSequence(limit) {
   var result = [];
   while (result.length < limit) {
@@ -67,13 +65,9 @@ function generateRandomSequence(limit) {
   return result;
 }
 
-console.log('Результат работы функции getRandomSequence: ' + generateRandomSequence(availableFeatures.length));
-
 var shuffle = function (array) {
   var randomIndexes = generateRandomSequence(array.length);
-  // console.log('randoxIndexes: ' + randomIndexes);
   var limitedIndexes = randomIndexes.slice(0, getRandomInt(5));
-  // console.log('limitedIndexes: ' + limitedIndexes);
   var result = [];
   for (var i = 0; i < limitedIndexes.length; i++) {
     var idx = limitedIndexes[i];
@@ -81,14 +75,6 @@ var shuffle = function (array) {
   }
   return result;
 };
-
-// console.log('Результат работы функции shuffle: ' + shuffle(availableFeatures));
-
-// var generatedFeatures = [];
-
-// for (var j = 0; j < getRandomIntOutOfRange(0, availableFeatures.length); j++) {
-//   generatedFeatures.push(availableFeatures[getRandomIntOutOfRange(0, (availableFeatures.length - 1))]);
-// }
 
 var ads = [];
 
@@ -120,7 +106,6 @@ for (var i = 0; i < 8; i++) {
 
   ads.push(ad);
 }
-console.log(ad.offer.photos);
 
 document.querySelector('.map').classList.remove('map--faded');
 
