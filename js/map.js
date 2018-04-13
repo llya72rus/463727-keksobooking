@@ -67,7 +67,7 @@ function generateRandomSequence(limit) {
 
 var shuffle = function (array) {
   var randomIndexes = generateRandomSequence(array.length);
-  var limitedIndexes = randomIndexes.slice(0, getRandomInt(5));
+  var limitedIndexes = randomIndexes.slice(0, getRandomInt(6));
   var result = [];
   for (var i = 0; i < limitedIndexes.length; i++) {
     var idx = limitedIndexes[i];
@@ -101,13 +101,13 @@ for (var i = 0; i < 8; i++) {
     'location': {
       'x': getRandomIntOutOfRange(300, 900),
       'y': getRandomIntOutOfRange(150, 500)
-    }
+    },
+    'index': i
   };
 
   ads.push(ad);
 }
 
-document.querySelector('.map').classList.remove('map--faded');
 
 var pin = document.querySelector('.map__pin');
 
@@ -116,7 +116,7 @@ var renderPin = function (object) {
   pinClone.style = 'left: ' + (object.location.x + 33) + 'px' + '; top: ' + (object.location.y + 87) + 'px';
   pinClone.querySelector('img').src = object.author.avatar;
   pinClone.querySelector('img').alt = object.offer.title;
-
+  pinClone.dataset.id = object.index;
   return pinClone;
 };
 
@@ -127,8 +127,6 @@ for (var index = 0; index < ads.length; index++) {
 }
 
 var pins = document.querySelector('.map__pins');
-pins.appendChild(fragmentPins);
-
 
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
@@ -170,6 +168,35 @@ var renderCard = function (card) {
 
 var fragmentCard = document.createDocumentFragment();
 
-fragmentCard.appendChild(renderCard(ads[0]));
 
-document.querySelector('.map').appendChild(fragmentCard);
+
+var form = document.querySelector('.ad-form');
+var fieldsets = document.querySelectorAll('.ad-form fieldset');
+var map = document.querySelector('.map');
+
+
+document.querySelector('.map__pin--main').addEventListener('mouseup', function () {
+  pins.appendChild(fragmentPins);
+  document.querySelector('.map').appendChild(fragmentCard);
+  form.classList.remove('ad-form--disabled');
+  map.classList.remove('map--faded');
+  for (var i = 0; i < fieldsets.length; i++) {
+    fieldsets[i].disabled = false;
+  }
+  var pinMain = document.querySelectorAll('.map__pin--main');
+  for (var i = 0; i < pinMain.length - 1; i++) {
+
+    pinMain[i].addEventListener('click', function (evt) {
+      evt.preventDefault();
+      console.log(evt.target);
+      var count = evt.target.dataset.id;
+      if (count !== void 0) {
+        fragmentCard.appendChild(renderCard(ads[count]));
+      }
+    });
+  }
+
+});
+
+document.querySelector('#address').value = ads[0].location.x + ', ' + ads[0].location.y;
+
