@@ -117,6 +117,12 @@ var renderPin = function (object) {
   pinClone.querySelector('img').src = object.author.avatar;
   pinClone.querySelector('img').alt = object.offer.title;
   pinClone.dataset.id = object.index;
+  pinClone.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    var fragmentCard = document.createDocumentFragment();
+    fragmentCard.appendChild(renderCard(ads[object.index]));
+    document.querySelector('.map').appendChild(fragmentCard);
+  });
   return pinClone;
 };
 
@@ -166,33 +172,17 @@ var renderCard = function (card) {
   return cardClone;
 };
 
-var fragmentCard = document.createDocumentFragment();
-
 var form = document.querySelector('.ad-form');
 var fieldsets = document.querySelectorAll('.ad-form fieldset');
 var map = document.querySelector('.map');
 
-
 document.querySelector('.map__pin--main').addEventListener('mouseup', function () {
   pins.appendChild(fragmentPins);
-  document.querySelector('.map').appendChild(fragmentCard);
   form.classList.remove('ad-form--disabled');
   map.classList.remove('map--faded');
   for (var q = 0; q < fieldsets.length; i++) {
     fieldsets[q].disabled = false;
   }
-  var pinMain = document.querySelectorAll('.map__pin--main');
-  for (var v = 0; v < pinMain.length - 1; v++) {
-
-    pinMain[v].addEventListener('click', function (evt) {
-      evt.preventDefault();
-      var count = evt.target.dataset.id;
-      if (count !== void 0) {
-        fragmentCard.appendChild(renderCard(ads[count]));
-      }
-    });
-  }
-
 });
 
 document.querySelector('#address').value = ads[0].location.x + ', ' + ads[0].location.y;
