@@ -108,7 +108,6 @@ for (var i = 0; i < 8; i++) {
   ads.push(ad);
 }
 
-
 var pin = document.querySelector('.map__pin');
 
 var renderPin = function (object) {
@@ -132,7 +131,7 @@ for (var index = 0; index < ads.length; index++) {
   fragmentPins.appendChild(renderPin(ads[index]));
 }
 
-var pins = document.querySelector('.map__pins');
+var pinsBlock = document.querySelector('.map__pins');
 
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
@@ -177,13 +176,12 @@ var fieldsets = document.querySelectorAll('.ad-form fieldset');
 var map = document.querySelector('.map');
 
 document.querySelector('.map__pin--main').addEventListener('mouseup', function () {
-  pins.appendChild(fragmentPins);
+  pinsBlock.appendChild(fragmentPins);
   form.classList.remove('ad-form--disabled');
   map.classList.remove('map--faded');
-  for (var q = 0; q < fieldsets.length; i++) {
+  for (var q = 0; q < fieldsets.length; q++) {
     fieldsets[q].disabled = false;
   }
 });
 
 document.querySelector('#address').value = ads[0].location.x + ', ' + ads[0].location.y;
-
