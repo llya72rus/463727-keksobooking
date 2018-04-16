@@ -108,11 +108,11 @@ for (var i = 0; i < 8; i++) {
   ads.push(ad);
 }
 
-var deleteCard = function (someCard) {
-  if (someCard) {
-    someCard.remove();
-  }
-};
+// var deleteCard = function (someCard) {
+//   if (someCard) {
+//     someCard.remove();
+//   }
+// };
 
 var pin = document.querySelector('.map__pin');
 
@@ -121,18 +121,18 @@ var renderPin = function (object) {
   pinClone.style = 'left: ' + (object.location.x + 33) + 'px' + '; top: ' + (object.location.y + 87) + 'px';
   pinClone.querySelector('img').src = object.author.avatar;
   pinClone.querySelector('img').alt = object.offer.title;
-  document.querySelector('.map__pins').addEventListener('click', function (evt) {
-
-    var target = evt.target;
-    for (var g = 0; g < 8; g++) {
-      if (target === pinClone) {
-        var fragmentCard = document.createDocumentFragment();
-        fragmentCard.appendChild(renderCard(ads[5]));
-        var card = document.querySelector('.map__card');
-        deleteCard(card);
-      }
-    }
-  });
+  pinClone.dataset.id = object.index;
+  // document.querySelector('.map__pins').addEventListener('click', function (evt) {
+  //   var target = evt.target;
+  //   for (var g = 0; g < 8; g++) {
+  //     if (target === pinClone) {
+  //       var fragmentCard = document.createDocumentFragment();
+  //       fragmentCard.appendChild(renderCard(ads[5]));
+  //       var card = document.querySelector('.map__card');
+  //       deleteCard(card);
+  //     }
+  //   }
+  // });
   // pinClone.addEventListener('click', function (evt) {
   //   evt.preventDefault();
   //   var fragmentCard = document.createDocumentFragment();
@@ -150,7 +150,35 @@ for (var index = 0; index < ads.length; index++) {
   fragmentPins.appendChild(renderPin(ads[index]));
 }
 
+
 var pinsBlock = document.querySelector('.map__pins');
+
+document.querySelector('.map__pins').addEventListener('click', function (evt) {
+  var target = evt.target;
+
+  while (target !== null) {
+    if (target.matches('.map__pin--main')) {
+      var metki = document.querySelectorAll('.map__pin--main');
+      for (var m = 1; i <= metki.length; m++) {
+        metki[m].addEventListener('click', function () {
+          var metkaNumber = metki[m].getAttribute('data-id');
+          var fragmentCard = document.createDocumentFragment();
+          fragmentCard.appendChild(renderCard(ads[metkaNumber]));
+          document.querySelector('.map').appendChild(fragmentCard);
+        });
+
+      }
+      // var metka2 = document.querySelector('.map__pin--main:nth-child(5)');
+      // var metka2number = metka2.getAttribute('data-id');
+      // console.log(metka2);
+      // console.log(metka2number);
+
+      break;
+    }
+    target = target.parentElement;
+  }
+
+});
 
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
@@ -204,3 +232,4 @@ document.querySelector('.map__pin--main').addEventListener('mouseup', function (
 });
 
 document.querySelector('#address').value = ads[0].location.x + ', ' + ads[0].location.y;
+
