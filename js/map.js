@@ -122,25 +122,6 @@ var renderPin = function (object) {
   pinClone.querySelector('img').src = object.author.avatar;
   pinClone.querySelector('img').alt = object.offer.title;
   pinClone.dataset.id = object.index;
-  // document.querySelector('.map__pins').addEventListener('click', function (evt) {
-  //   var target = evt.target;
-  //   for (var g = 0; g < 8; g++) {
-  //     if (target === pinClone) {
-  //       var fragmentCard = document.createDocumentFragment();
-  //       fragmentCard.appendChild(renderCard(ads[5]));
-  //       var card = document.querySelector('.map__card');
-  //       deleteCard(card);
-  //     }
-  //   }
-  // });
-  // pinClone.addEventListener('click', function (evt) {
-  //   evt.preventDefault();
-  //   var fragmentCard = document.createDocumentFragment();
-  //   fragmentCard.appendChild(renderCard(ads[0]));
-  //   // var card = document.querySelector('.map__card');
-  //   // card.remove();
-  //   document.querySelector('.map').appendChild(fragmentCard);
-  // });
   return pinClone;
 };
 
@@ -195,7 +176,7 @@ document.querySelector('.map__pins').addEventListener('click', function (evt) {
   var target = evt.target;
 
   while (target !== null) {
-    if (target.matches('.map__pin--main')) {
+    if (target.matches('.map__pin--main') && target.hasAttribute('data-id')) {
       var renderedCard = renderCard(ads[target.dataset.id]);
       deleteCard(document.querySelector('.popup'));
       document.querySelector('.map').appendChild(renderedCard);
@@ -228,4 +209,3 @@ var defaultPin = {
 };
 
 document.querySelector('#address').value = defaultPin.top + 65 + ', ' + (defaultPin.left + 33);
-
