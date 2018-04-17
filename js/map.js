@@ -197,11 +197,11 @@ document.querySelector('.map__pins').addEventListener('click', function (evt) {
   while (target !== null) {
     if (target.matches('.map__pin--main')) {
       var renderedCard = renderCard(ads[target.dataset.id]);
-      var card = document.querySelector('.popup');
-      deleteCard(card);
+      deleteCard(document.querySelector('.popup'));
       document.querySelector('.map').appendChild(renderedCard);
-
-      // console.log(card);
+      document.querySelector('.popup__close').addEventListener('click', function () {
+        deleteCard(document.querySelector('.popup'));
+      });
       break;
     }
     target = target.parentElement;
@@ -222,5 +222,10 @@ document.querySelector('.map__pin--main').addEventListener('mouseup', function (
   }
 });
 
-document.querySelector('#address').value = ads[0].location.x + ', ' + ads[0].location.y;
+var defaultPin = {
+  top: 375,
+  left: 570
+};
+
+document.querySelector('#address').value = defaultPin.top + 65 + ', ' + (defaultPin.left + 33);
 
