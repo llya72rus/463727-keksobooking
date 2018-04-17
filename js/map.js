@@ -108,11 +108,11 @@ for (var i = 0; i < 8; i++) {
   ads.push(ad);
 }
 
-// var deleteCard = function (someCard) {
-//   if (someCard) {
-//     someCard.remove();
-//   }
-// };
+var deleteCard = function (someCard) {
+  if (someCard) {
+    someCard.remove();
+  }
+};
 
 var pin = document.querySelector('.map__pin');
 
@@ -149,36 +149,6 @@ var fragmentPins = document.createDocumentFragment();
 for (var index = 0; index < ads.length; index++) {
   fragmentPins.appendChild(renderPin(ads[index]));
 }
-
-
-var pinsBlock = document.querySelector('.map__pins');
-
-document.querySelector('.map__pins').addEventListener('click', function (evt) {
-  var target = evt.target;
-
-  while (target !== null) {
-    if (target.matches('.map__pin--main')) {
-      var metki = document.querySelectorAll('.map__pin--main');
-      for (var m = 1; i <= metki.length; m++) {
-        metki[m].addEventListener('click', function () {
-          var metkaNumber = metki[m].getAttribute('data-id');
-          var fragmentCard = document.createDocumentFragment();
-          fragmentCard.appendChild(renderCard(ads[metkaNumber]));
-          document.querySelector('.map').appendChild(fragmentCard);
-        });
-
-      }
-      // var metka2 = document.querySelector('.map__pin--main:nth-child(5)');
-      // var metka2number = metka2.getAttribute('data-id');
-      // console.log(metka2);
-      // console.log(metka2number);
-
-      break;
-    }
-    target = target.parentElement;
-  }
-
-});
 
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
@@ -217,6 +187,27 @@ var renderCard = function (card) {
   cardClone.querySelector('.popup__photos').removeChild(img);
   return cardClone;
 };
+
+var pinsBlock = document.querySelector('.map__pins');
+
+
+document.querySelector('.map__pins').addEventListener('click', function (evt) {
+  var target = evt.target;
+
+  while (target !== null) {
+    if (target.matches('.map__pin--main')) {
+      var renderedCard = renderCard(ads[target.dataset.id]);
+      var card = document.querySelector('.popup');
+      deleteCard(card);
+      document.querySelector('.map').appendChild(renderedCard);
+
+      // console.log(card);
+      break;
+    }
+    target = target.parentElement;
+  }
+
+});
 
 var form = document.querySelector('.ad-form');
 var fieldsets = document.querySelectorAll('.ad-form fieldset');
