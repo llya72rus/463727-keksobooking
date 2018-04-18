@@ -85,8 +85,8 @@ var generateIconsFeatures = function (list, arrayFeatures) {
     iconFeature.classList.add('popup__feature--' + arrayFeatures[i]);
     fragment.appendChild(iconFeature);
   }
-
-  list.innerHTML = fragment;
+  list.innerHTML = '';
+  list.appendChild(fragment);
 };
 
 var ads = [];
