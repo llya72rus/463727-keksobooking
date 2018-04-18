@@ -76,6 +76,19 @@ var shuffle = function (array) {
   return result;
 };
 
+
+var generateIconsFeatures = function (list, arrayFeatures) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < arrayFeatures.length; i++) {
+    var iconFeature = document.createElement('li');
+    iconFeature.classList.add('popup__feature');
+    iconFeature.classList.add('popup__feature--' + arrayFeatures[i]);
+    fragment.appendChild(iconFeature);
+  }
+
+  list.appendChild(fragment);
+};
+
 var ads = [];
 
 for (var i = 0; i < 8; i++) {
@@ -114,6 +127,21 @@ var deleteCard = function (someCard) {
   }
 };
 
+var translateType = function (type) {
+  switch (type) {
+    case 'flat':
+      return 'Квартира';
+    case 'bungalo':
+      return 'Бунгало';
+    case 'house':
+      return 'Дом';
+    case 'palace':
+      return 'Дворец';
+    default:
+      return type;
+  }
+};
+
 var pin = document.querySelector('.map__pin');
 
 var renderPin = function (object) {
@@ -138,25 +166,11 @@ var renderCard = function (card) {
   cardClone.querySelector('.popup__title').textContent = card.offer.title;
   cardClone.querySelector('.popup__text--address').textContent = card.offer.address;
   cardClone.querySelector('.popup__text--price').textContent = card.offer.price + ' ₽/ночь';
-  switch (card.offer.types) {
-    case 'bungalo':
-      cardClone.querySelector('.popup__type').textContent = 'Бунгало';
-      break;
-
-    case 'house':
-      cardClone.querySelector('.popup__type').textContent = 'Дом';
-      break;
-
-    case 'palace':
-      cardClone.querySelector('.popup__type').textContent = 'Дворец';
-      break;
-
-    default:
-      cardClone.querySelector('.popup__type').textContent = 'Квартира';
-  }
+  cardClone.querySelector('.popup__type').textContent = translateType(card.offer.types);
   cardClone.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
   cardClone.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
-  cardClone.querySelector('.popup__features').textContent = card.offer.features;
+  var featuresList = document.querySelector('.popup__features');
+  generateIconsFeatures(featuresList, shuffle(availableFeatures));
   cardClone.querySelector('.popup__description').textContent = card.offer.description;
   cardClone.querySelector('.popup__avatar').src = card.author.avatar;
   var img = cardClone.querySelector('.popup__photos img');
