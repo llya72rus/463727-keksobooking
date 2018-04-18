@@ -86,7 +86,7 @@ var generateIconsFeatures = function (list, arrayFeatures) {
     fragment.appendChild(iconFeature);
   }
 
-  list.appendChild(fragment);
+  list.innerHTML = fragment;
 };
 
 var ads = [];
@@ -169,7 +169,7 @@ var renderCard = function (card) {
   cardClone.querySelector('.popup__type').textContent = translateType(card.offer.types);
   cardClone.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
   cardClone.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
-  var featuresList = document.querySelector('.popup__features');
+  var featuresList = cardClone.querySelector('.popup__features');
   generateIconsFeatures(featuresList, shuffle(availableFeatures));
   cardClone.querySelector('.popup__description').textContent = card.offer.description;
   cardClone.querySelector('.popup__avatar').src = card.author.avatar;
