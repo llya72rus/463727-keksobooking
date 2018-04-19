@@ -67,13 +67,26 @@ function generateRandomSequence(limit) {
 
 var shuffle = function (array) {
   var randomIndexes = generateRandomSequence(array.length);
-  var limitedIndexes = randomIndexes.slice(0, getRandomInt(5));
+  var limitedIndexes = randomIndexes.slice(0, getRandomInt(6));
   var result = [];
   for (var i = 0; i < limitedIndexes.length; i++) {
     var idx = limitedIndexes[i];
     result[i] = array[idx];
   }
   return result;
+};
+
+
+var generateIconsFeatures = function (list, arrayFeatures) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < arrayFeatures.length; i++) {
+    var iconFeature = document.createElement('li');
+    iconFeature.classList.add('popup__feature');
+    iconFeature.classList.add('popup__feature--' + arrayFeatures[i]);
+    fragment.appendChild(iconFeature);
+  }
+  list.innerHTML = '';
+  list.appendChild(fragment);
 };
 
 var ads = [];
@@ -101,13 +114,33 @@ for (var i = 0; i < 8; i++) {
     'location': {
       'x': getRandomIntOutOfRange(300, 900),
       'y': getRandomIntOutOfRange(150, 500)
-    }
+    },
+    'index': i
   };
 
   ads.push(ad);
 }
 
-document.querySelector('.map').classList.remove('map--faded');
+var deleteCard = function (someCard) {
+  if (someCard) {
+    someCard.remove();
+  }
+};
+
+var translateType = function (type) {
+  switch (type) {
+    case 'flat':
+      return 'Квартира';
+    case 'bungalo':
+      return 'Бунгало';
+    case 'house':
+      return 'Дом';
+    case 'palace':
+      return 'Дворец';
+    default:
+      return type;
+  }
+};
 
 var pin = document.querySelector('.map__pin');
 
@@ -116,7 +149,7 @@ var renderPin = function (object) {
   pinClone.style = 'left: ' + (object.location.x + 33) + 'px' + '; top: ' + (object.location.y + 87) + 'px';
   pinClone.querySelector('img').src = object.author.avatar;
   pinClone.querySelector('img').alt = object.offer.title;
-
+  pinClone.dataset.id = object.index;
   return pinClone;
 };
 
@@ -126,10 +159,6 @@ for (var index = 0; index < ads.length; index++) {
   fragmentPins.appendChild(renderPin(ads[index]));
 }
 
-var pins = document.querySelector('.map__pins');
-pins.appendChild(fragmentPins);
-
-
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
 var renderCard = function (card) {
@@ -137,25 +166,11 @@ var renderCard = function (card) {
   cardClone.querySelector('.popup__title').textContent = card.offer.title;
   cardClone.querySelector('.popup__text--address').textContent = card.offer.address;
   cardClone.querySelector('.popup__text--price').textContent = card.offer.price + ' ₽/ночь';
-  switch (card.offer.types) {
-    case 'bungalo':
-      cardClone.querySelector('.popup__type').textContent = 'Бунгало';
-      break;
-
-    case 'house':
-      cardClone.querySelector('.popup__type').textContent = 'Дом';
-      break;
-
-    case 'palace':
-      cardClone.querySelector('.popup__type').textContent = 'Дворец';
-      break;
-
-    default:
-      cardClone.querySelector('.popup__type').textContent = 'Квартира';
-  }
+  cardClone.querySelector('.popup__type').textContent = translateType(card.offer.types);
   cardClone.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
   cardClone.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
-  cardClone.querySelector('.popup__features').textContent = card.offer.features;
+  var featuresList = cardClone.querySelector('.popup__features');
+  generateIconsFeatures(featuresList, shuffle(availableFeatures));
   cardClone.querySelector('.popup__description').textContent = card.offer.description;
   cardClone.querySelector('.popup__avatar').src = card.author.avatar;
   var img = cardClone.querySelector('.popup__photos img');
@@ -168,8 +183,43 @@ var renderCard = function (card) {
   return cardClone;
 };
 
-var fragmentCard = document.createDocumentFragment();
+var pinsBlock = document.querySelector('.map__pins');
 
-fragmentCard.appendChild(renderCard(ads[0]));
 
-document.querySelector('.map').appendChild(fragmentCard);
+document.querySelector('.map__pins').addEventListener('click', function (evt) {
+  var target = evt.target;
+
+  while (target !== null) {
+    if (target.matches('.map__pin--main') && target.hasAttribute('data-id')) {
+      var renderedCard = renderCard(ads[target.dataset.id]);
+      deleteCard(document.querySelector('.popup'));
+      document.querySelector('.map').appendChild(renderedCard);
+      document.querySelector('.popup__close').addEventListener('click', function () {
+        deleteCard(document.querySelector('.popup'));
+      });
+      break;
+    }
+    target = target.parentElement;
+  }
+
+});
+
+var form = document.querySelector('.ad-form');
+var fieldsets = document.querySelectorAll('.ad-form fieldset');
+var map = document.querySelector('.map');
+
+document.querySelector('.map__pin--main').addEventListener('mouseup', function () {
+  pinsBlock.appendChild(fragmentPins);
+  form.classList.remove('ad-form--disabled');
+  map.classList.remove('map--faded');
+  for (var q = 0; q < fieldsets.length; q++) {
+    fieldsets[q].disabled = false;
+  }
+});
+
+var defaultPin = {
+  top: 375,
+  left: 570
+};
+
+document.querySelector('#address').value = defaultPin.top + 65 + ', ' + (defaultPin.left + 33);
