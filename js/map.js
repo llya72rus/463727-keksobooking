@@ -230,21 +230,21 @@ var buildingTypeSelect = userForm.querySelector('#type');
 var checkinSelectElem = userForm.querySelector('#timein');
 var checkoutSelectElem = userForm.querySelector('#timeout');
 
-var MIN_FLAT_PRICE = 1000;
-var MIN_HOUSE_PRICE = 5000;
-var MIN_PALACE_PRICE = 10000;
+// var MIN_FLAT_PRICE = 1000;
+// var MIN_HOUSE_PRICE = 5000;
+// var MIN_PALACE_PRICE = 10000;
 
-if (buildingTypeSelect.value === 'flat' && (pricePerNightInput.value < MIN_FLAT_PRICE)) {
-  pricePerNightInput.setAttribute('min', MIN_FLAT_PRICE);
-}
+// if (buildingTypeSelect.value === 'flat' && (pricePerNightInput.value < MIN_FLAT_PRICE)) {
+//   pricePerNightInput.setAttribute('min', MIN_FLAT_PRICE);
+// }
 
-if (buildingTypeSelect.value === 'house' && (pricePerNightInput.value < MIN_HOUSE_PRICE)) {
-  pricePerNightInput.setAttribute('min', MIN_HOUSE_PRICE);
-}
+// if (buildingTypeSelect.value === 'house' && (pricePerNightInput.value < MIN_HOUSE_PRICE)) {
+//   pricePerNightInput.setAttribute('min', MIN_HOUSE_PRICE);
+// }
 
-if (buildingTypeSelect.value === 'palace' && (pricePerNightInput.value < MIN_PALACE_PRICE)) {
-  pricePerNightInput.setAttribute('min', MIN_PALACE_PRICE);
-}
+// if (buildingTypeSelect.value === 'palace' && (pricePerNightInput.value < MIN_PALACE_PRICE)) {
+//   pricePerNightInput.setAttribute('min', MIN_PALACE_PRICE);
+// }
 
 
 var housingToMinPrice = {
@@ -258,7 +258,6 @@ var housingToMinPrice = {
 var syncTypeWithMinPrice = function () {
   var selectedType = buildingTypeSelect.options[buildingTypeSelect.selectedIndex].value;
   var selectedPrice = housingToMinPrice[selectedType];
-  // console.log(selectedType, selectedPrice);
 
   pricePerNightInput.min = selectedPrice;
   pricePerNightInput.placeholder = selectedPrice;
@@ -277,16 +276,31 @@ var syncSelectElemsValue = function (changedSelect, syncingSelect) {
 };
 
 userForm.addEventListener('change', syncTypeWithMinPrice);
+
 userForm.addEventListener('change', function () {
   syncSelectElemsValue(checkinSelectElem, checkoutSelectElem);
 }, false);
 
 var roomNumberSelect = userForm.querySelector('#room_number');
-var roomNumberOptions = userForm.querySelectorAll('#room_number option');
-// Не получается сделать атрибут disabled
-for (var z = 0; z < roomNumberOptions.length; z++) {
-  if (roomNumberSelect.options[z].value === 100) {
-    userForm.querySelector('#no-guests').disabled = true;
-  }
-}
+var roomsCapacity = userForm.querySelector('#capacity');
 
+var disableOptions = function (select, selectableOption) {
+  for (var t = 0; t < select.length; t++) {
+    select[t].disabled = true;
+  }
+  selectableOption.disabled = false;
+  selectableOption.selected = true;
+};
+
+userForm.addEventListener('change', function () {
+  var selectedRooms = roomNumberSelect.options[roomNumberSelect.selectedIndex].value;
+  if (selectedRooms === '1') {
+    disableOptions(roomsCapacity, roomsCapacity[0]);
+  } else if (selectedRooms === '2') {
+    disableOptions(roomsCapacity, roomsCapacity[1]);
+  } else if (selectedRooms === '3') {
+    disableOptions(roomsCapacity, roomsCapacity[2]);
+  } else {
+    disableOptions(roomsCapacity, roomsCapacity[3]);
+  }
+});
