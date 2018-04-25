@@ -230,23 +230,6 @@ var buildingTypeSelect = userForm.querySelector('#type');
 var checkinSelectElem = userForm.querySelector('#timein');
 var checkoutSelectElem = userForm.querySelector('#timeout');
 
-// var MIN_FLAT_PRICE = 1000;
-// var MIN_HOUSE_PRICE = 5000;
-// var MIN_PALACE_PRICE = 10000;
-
-// if (buildingTypeSelect.value === 'flat' && (pricePerNightInput.value < MIN_FLAT_PRICE)) {
-//   pricePerNightInput.setAttribute('min', MIN_FLAT_PRICE);
-// }
-
-// if (buildingTypeSelect.value === 'house' && (pricePerNightInput.value < MIN_HOUSE_PRICE)) {
-//   pricePerNightInput.setAttribute('min', MIN_HOUSE_PRICE);
-// }
-
-// if (buildingTypeSelect.value === 'palace' && (pricePerNightInput.value < MIN_PALACE_PRICE)) {
-//   pricePerNightInput.setAttribute('min', MIN_PALACE_PRICE);
-// }
-
-
 var housingToMinPrice = {
   bungalo: '0',
   flat: '1000',
@@ -303,4 +286,8 @@ userForm.addEventListener('change', function () {
   } else {
     disableOptions(roomsCapacity, roomsCapacity[3]);
   }
+});
+
+userForm.addEventListener('submit', function () {
+  document.querySelector('.success').classList.remove('hidden');
 });
