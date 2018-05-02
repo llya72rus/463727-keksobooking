@@ -6,16 +6,13 @@ window.util = (function () {
       var rand = Math.round(Math.random() * length) + min;
       return rand;
     },
-
     getRandomInt: function (limit) {
       return Math.floor(Math.random() * limit);
     },
-
     getRandomArrayElem: function (arr) {
       var index = window.util.getRandomInt(arr.length - 1);
       return arr[index];
     },
-
     getUniqueItem: function (arr, limit) {
       var randomIdx = window.util.getRandomInt(limit);
       if (arr.includes(randomIdx)) {
