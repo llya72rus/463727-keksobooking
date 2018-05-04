@@ -1,33 +1,34 @@
 'use strict';
 
 (function () {
-  window.titles = [
-    'Большая уютная квартира',
-    'Маленькая неуютная квартира',
-    'Огромный прекрасный дворец',
-    'Маленький ужасный дворец',
-    'Красивый гостевой домик',
-    'Некрасивый негостеприимный домик',
-    'Уютное бунгало далеко от моря',
-    'Неуютное бунгало по колено в воде'
-  ];
+  var MainPin = {
+    width: 62,
+    height: 84,
+    positionX: 570,
+    positionY: 375
+  };
 
-  window.buildingTypes = ['palace', 'flat', 'house', 'bungalo'];
+  var Types = {
+    'palace': {
+      name: 'Дворец',
+      price: '10000'
+    },
+    'house': {
+      name: 'Дом',
+      price: '5000'
+    },
+    'flat': {
+      name: 'Квартира',
+      price: '1000'
+    },
+    'bungalo': {
+      name: 'Бунгало',
+      price: '0'
+    }
+  };
 
-  window.times = ['12:00', '13:00', '14:00'];
-
-  window.availableFeatures = [
-    'wifi',
-    'dishwasher',
-    'parking',
-    'washer',
-    'elevator',
-    'conditioner'
-  ];
-
-  window.availablePhotos = [
-    'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
-  ];
+  window.data = {
+    types: Types,
+    mainPin: MainPin
+  };
 })();
