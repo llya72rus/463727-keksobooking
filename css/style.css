@@ -174,8 +174,6 @@ fieldset {
 
   border: 0;
   background: none;
-
-  user-select: none;
 }
 
 .map__pin:focus {
@@ -224,6 +222,8 @@ fieldset {
 }
 
 .map__pin--main {
+  z-index: 2;
+
   width: 65px;
   height: 65px;
 
@@ -482,10 +482,6 @@ fieldset {
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset;
 }
 
-.map__filter:disabled,
-fieldset:disabled .map__feature {
-  cursor: default;
-}
 
 /* Форма объявления */
 
@@ -886,15 +882,6 @@ fieldset:disabled .map__feature {
           box-shadow: 0 0 2px 2px #ff6547;
 }
 
-fieldset:disabled label[class$="__drop-zone"],
-fieldset:disabled .feature,
-fieldset:disabled button {
-  cursor: default;
-}
-
-.ad-form__element .error {
-  border-color: #ff6547;
-}
 
 /* Футер */
 
@@ -1227,22 +1214,4 @@ fieldset:disabled button {
   -webkit-transform: translateX(-50%);
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
-}
-
-/* Ошибка */
-
-.error-message {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-
-  width: 100%;
-  padding: 5px;
-
-  font-size: 18px;
-  color: #ffffff;
-  text-align: center;
-
-  background-color: rgba(255, 86, 53, 0.8);
 }

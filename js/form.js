@@ -1,67 +1,91 @@
 'use strict';
 
 (function () {
-  var adForm = document.querySelector('.ad-form');
-  var adFormType = adForm.querySelector('#type');
-  var adFormPrice = adForm.querySelector('#price');
-  var adFormRooms = adForm.querySelector('#room_number');
-  var adFormGuests = adForm.querySelector('#capacity');
-  var adFormCheckIn = adForm.querySelector('#timein');
-  var adFormCheckOut = adForm.querySelector('#timeout');
+  var successElement = document.querySelector('.success');
+  var formElement = document.querySelector('.ad-form');
+  var typeField = formElement.querySelector('#type');
+  var priceField = formElement.querySelector('#price');
+  var timeInField = formElement.querySelector('#timein');
+  var timeOutField = formElement.querySelector('#timeout');
+  var roomNumberField = formElement.querySelector('#room_number');
+  var roomCapacityField = formElement.querySelector('#capacity');
+  var formResetBtn = formElement.querySelector('.ad-form__reset');
 
-  var adFormTypeHandler = function (evt) {
-    var offerType = evt.target.value;
-    if (Object.getOwnPropertyNames(window.data.types).includes(offerType)) {
-      adFormPrice.min = window.data.types[offerType].price;
-      adFormPrice.placeholder = window.data.types[offerType].price;
+
+  typeField.addEventListener('change', function (evt) {
+    switch (evt.currentTarget.value) {
+      case 'bungalo':
+        priceField.min = 0;
+        priceField.placeholder = '0';
+        break;
+      case 'flat':
+        priceField.min = 1000;
+        priceField.placeholder = '1000';
+        break;
+      case 'house':
+        priceField.min = 5000;
+        priceField.placeholder = '5000';
+        break;
+      case 'palace':
+        priceField.min = 10000;
+        priceField.placeholder = '10000';
+        break;
+    }
+  });
+
+
+  var roomChangeHandler = function () {
+    var validationRoomToCapacityMap = {
+      1: ['1'],
+      2: ['2', '1'],
+      3: ['3', '2', '1'],
+      100: ['0']
+    };
+
+    var selectedRoomNumber = roomNumberField.options[roomNumberField.selectedIndex].value;
+    var selectedRoomCapacity = roomCapacityField.options[roomCapacityField.selectedIndex].value;
+
+    var isCapacityWrong = validationRoomToCapacityMap[selectedRoomNumber].indexOf(selectedRoomCapacity) === -1;
+
+    if (isCapacityWrong) {
+      roomCapacityField.setCustomValidity('Выбранное количество гостей не подходит под количество комнат');
     } else {
-      adFormPrice.min = '0';
-      adFormPrice.placeholder = '0';
+      roomCapacityField.setCustomValidity('');
     }
   };
 
-  var adFormRoomsHandler = function () {
-    var roomsValue = adFormRooms.options[adFormRooms.selectedIndex].value;
-    var guestsValue = adFormGuests.options[adFormGuests.selectedIndex].value;
-    if (roomsValue === '1' && guestsValue !== '1') {
-      adFormGuests.setCustomValidity('Подходит только для 1 гостя');
-      adFormGuests.classList.add('error');
-    } else if (roomsValue === '2' && guestsValue !== '1' && guestsValue !== '2') {
-      adFormGuests.setCustomValidity('Подходит только для 1 или 2 гостей');
-      adFormGuests.classList.add('error');
-    } else if (roomsValue === '3' && guestsValue !== '1' && guestsValue !== '2' && guestsValue !== '3') {
-      adFormGuests.setCustomValidity('Подходит только для 1,2 или 3 гостей');
-      adFormGuests.classList.add('error');
-    } else if (roomsValue === '100' && guestsValue !== '0') {
-      adFormGuests.setCustomValidity('Не подходит для гостей');
-      adFormGuests.classList.add('error');
-    } else {
-      adFormGuests.setCustomValidity('');
-      adFormGuests.classList.remove('error');
-    }
+  timeInField.addEventListener('change', function () {
+    timeOutField.selectedIndex = timeInField.selectedIndex;
+  });
+  timeOutField.addEventListener('change', function () {
+    timeInField.selectedIndex = timeOutField.selectedIndex;
+  });
+
+  roomNumberField.addEventListener('change', roomChangeHandler);
+  roomCapacityField.addEventListener('change', roomChangeHandler);
+
+
+  var successSendFormDataHandler = function () {
+    successElement.classList.remove('hidden');
+
+    setTimeout(function () {
+      successElement.classList.add('hidden');
+    }, 3000);
+
+    formElement.reset();
+    window.map.deactivate();
   };
 
-  var adFormCheckHandler = function (evt) {
-    var selectTarget = evt.target.id === 'timein' ? adFormCheckIn : adFormCheckOut;
-    var selectCompare = evt.target.id === 'timein' ? adFormCheckOut : adFormCheckIn;
-    selectCompare.value = selectTarget.options[selectTarget.selectedIndex].value;
-  };
 
-  var adFormSubmitHandler = function (evt) {
+  formResetBtn.addEventListener('click', function () {
+    formElement.reset();
+    window.map.deactivate();
+  });
+
+
+  formElement.addEventListener('submit', function (evt) {
+    window.backend.sendFormData(new FormData(formElement), successSendFormDataHandler, window.errorMessage.show);
+
     evt.preventDefault();
-    window.backend.save(new FormData(adForm), window.alert.getSuccessMessage, window.alert.getErrorMessage);
-  };
-
-  window.util.disableFields(true);
-  window.util.setAddress();
-
-  adFormType.addEventListener('change', adFormTypeHandler);
-  adFormRooms.addEventListener('change', adFormRoomsHandler);
-  adFormGuests.addEventListener('change', adFormRoomsHandler);
-  adFormCheckIn.addEventListener('change', adFormCheckHandler);
-  adFormCheckOut.addEventListener('change', adFormCheckHandler);
-
-  window.form = {
-    submit: adFormSubmitHandler
-  };
+  });
 })();

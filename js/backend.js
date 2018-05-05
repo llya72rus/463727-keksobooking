@@ -1,62 +1,42 @@
 'use strict';
 
 (function () {
-  var SUCCESS_STATUS = 200;
-  var TIMEOUT_VALUE = 10000;
-  var URL_SAVE = 'https://js.dump.academy/keksobooking';
-  var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
+  var GET_CARDS_DATA_URL = 'https://js.dump.academy/keksobooking/data';
+  var SEND_FORM_DATA_URL = 'https://js.dump.academy/keksobooking';
+  var TIMEOUT = 10000;
 
-  var ErrorMessage = {
-    load: 'Статус ответа: ',
-    error: 'Произошла ошибка соединения',
-    timeout: 'Привышен лимит ожидания: '
+  var loadData = function (method, url, onLoad, onError, data) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+
+    xhr.addEventListener('load', function () {
+      if (xhr.status === 200) {
+        onLoad(xhr.response);
+      } else {
+        onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
+      }
+    });
+
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
+
+    xhr.addEventListener('timeout', function () {
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    });
+
+    xhr.timeout = TIMEOUT;
+
+    xhr.open(method, url);
+    xhr.send(data);
   };
 
   window.backend = {
-    save: function (data, onLoad, onError) {
-      var xhr = new XMLHttpRequest();
-
-      xhr.addEventListener('load', function () {
-        if (xhr.status === SUCCESS_STATUS) {
-          onLoad();
-        } else {
-          onError(ErrorMessage.load + xhr.status + ' ' + xhr.statusText);
-        }
-      });
-      xhr.addEventListener('error', function () {
-        onError(ErrorMessage.error);
-      });
-      xhr.addEventListener('timeout', function () {
-        onError(ErrorMessage.timeout + xhr.timeout);
-      });
-
-      xhr.timeout = TIMEOUT_VALUE;
-
-      xhr.open('POST', URL_SAVE);
-      xhr.send(data);
+    loadCardsData: function (onLoad, onError) {
+      loadData('GET', GET_CARDS_DATA_URL, onLoad, onError);
     },
-    load: function (onLoad, onError) {
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
-
-      xhr.addEventListener('load', function () {
-        if (xhr.status === SUCCESS_STATUS) {
-          onLoad(xhr.response);
-        } else {
-          onError(ErrorMessage.load + xhr.status + ' ' + xhr.statusText);
-        }
-      });
-      xhr.addEventListener('error', function () {
-        onError(ErrorMessage.error);
-      });
-      xhr.addEventListener('timeout', function () {
-        onError(ErrorMessage.timeout + xhr.timeout);
-      });
-
-      xhr.timeout = TIMEOUT_VALUE;
-
-      xhr.open('GET', URL_LOAD);
-      xhr.send();
+    sendFormData: function (data, onLoad, onError) {
+      loadData('POST', SEND_FORM_DATA_URL, onLoad, onError, data);
     }
   };
 })();
