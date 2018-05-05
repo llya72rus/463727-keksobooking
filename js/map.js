@@ -1,46 +1,65 @@
-// Модуль отрисовывает пины и карточку объявления, устанавливает взаимодействие карточки и пина на карте
 'use strict';
 
 (function () {
-  var mapElement = document.querySelector('.map');
-  var mapPinMain = mapElement.querySelector('.map__pin--main');
+  var map = document.querySelector('.map');
+  var pinMain = map.querySelector('.map__pin--main');
+  var pinHalfWidth = window.data.mainPin.width / 2;
 
-  // Активирует карту
-  var activateMap = function () {
-    mapElement.classList.remove('map--faded');
+  var MapLimit = {
+    top: 150 - window.data.mainPin.height,
+    bottom: 500
   };
 
-  // Переключает карту в неактивное состояние
-  var deactivateMap = function () {
-    mapElement.classList.add('map--faded');
-  };
+  pinMain.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
 
-  // Переключает страницу в активное состояние
-  var activatePage = function () {
-    activateMap();
-    window.form.activateForm();
-    window.mainpin.sendMapPinMainCoordinates(true);
-    window.backend.load(window.pins.renderMapPins, window.util.showErrorMessage);
-    mapPinMain.removeEventListener('mouseup', activatePage);
-  };
+    var startCoordinates = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
 
-  // Добавляет на метку-кекс обработчик события (отпускание элемента), активирующий страницу
-  mapPinMain.addEventListener('mouseup', activatePage);
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
 
-  window.map = {
-    // Переключает страницу в неактивное состояние
-    deactivatePage: function () {
-      deactivateMap();
-      window.form.deactivateForm();
-      window.mainpin.resetPinMain();
-      window.form.resetAdForm();
-      window.pins.deletePins();
-      window.popup.closeAdCard();
-      window.mainpin.sendMapPinMainCoordinates(false);
-      mapPinMain.addEventListener('mouseup', activatePage);
-    }
-  };
+      var shift = {
+        x: startCoordinates.x - moveEvt.clientX,
+        y: startCoordinates.y - moveEvt.clientY
+      };
 
-  // Исходное состояние страницы
-  window.map.deactivatePage();
+      startCoordinates = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      pinMain.style.top = (pinMain.offsetTop - shift.y) + 'px';
+      pinMain.style.left = (pinMain.offsetLeft - shift.x) + 'px';
+
+      if (pinMain.offsetTop < MapLimit.top) {
+        pinMain.style.top = MapLimit.top + 'px';
+      } else if (pinMain.offsetTop + window.data.mainPin.height > MapLimit.bottom) {
+        pinMain.style.top = MapLimit.bottom - window.data.mainPin.height + 'px';
+      }
+
+      if (pinMain.offsetLeft + pinHalfWidth < 0) {
+        pinMain.style.left = 0 - pinHalfWidth + 'px';
+      } else if (pinMain.offsetLeft + pinHalfWidth > map.offsetWidth) {
+        pinMain.style.left = map.offsetWidth - pinHalfWidth + 'px';
+      }
+
+      window.util.setAddress();
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      window.util.setAddress();
+      if (!document.querySelector('.map:not(.map--faded)')) {
+        window.state.activatePage();
+      }
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 })();
