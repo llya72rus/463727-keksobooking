@@ -67,7 +67,7 @@
 
   filtersFormElement.addEventListener('change', function () {
     if (!cachedData) {
-      return
+      return;
     }
 
     var updatePins = function () {

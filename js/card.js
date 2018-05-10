@@ -2,15 +2,13 @@
 
 (function () {
   var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
-
 
   var OfferType = {
     'palace': 'Дворец',
     'flat': 'Квартира',
     'house': 'Дом',
     'bungalo': 'Бунгало'
-  }
+  };
 
   var createFeatureElement = function (featureData) {
     var featureElement = document.createElement('li');
@@ -46,9 +44,9 @@
     window.hideCardOnEscapeKeyPress = function (evt) {
       if (evt.keyCode === ESC_KEYCODE) {
         hideCardItemElement();
-        document.removeEventListener('keydown', window.hideCardOnEscapeKeyPress)
+        document.removeEventListener('keydown', window.hideCardOnEscapeKeyPress);
       }
-    }
+    };
 
     document.addEventListener('keydown', window.hideCardOnEscapeKeyPress);
 
@@ -92,7 +90,7 @@
       photosElement.appendChild(createPhotoElement(offer.photos[i]));
     }
 
-    document.addEventListener('keydown', window.hideCardOnEscapeKeyPress)
+    document.addEventListener('keydown', window.hideCardOnEscapeKeyPress);
     window.cardElement.classList.remove('hidden');
   };
 
