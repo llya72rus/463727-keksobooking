@@ -4,20 +4,13 @@
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
 
-  var tranformOfferType = function (offerType) {
-    switch (offerType) {
-      case 'palace':
-        return 'Дворец';
-      case 'flat':
-        return 'Квартира';
-      case 'house':
-        return 'Дом';
-      case 'bungalo':
-        return 'Бунгало';
-    }
 
-    return offerType;
-  };
+  var OfferType = {
+    'palace': 'Дворец',
+    'flat': 'Квартира',
+    'house': 'Дом',
+    'bungalo': 'Бунгало'
+  }
 
   var createFeatureElement = function (featureData) {
     var featureElement = document.createElement('li');
@@ -50,19 +43,16 @@
 
     hideCardItemElement();
 
-    document.addEventListener('keydown', function (evt) {
+    window.hideCardOnEscapeKeyPress = function (evt) {
       if (evt.keyCode === ESC_KEYCODE) {
         hideCardItemElement();
+        document.removeEventListener('keydown', window.hideCardOnEscapeKeyPress)
       }
-    });
-    btnCloseItemElement.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        hideCardItemElement();
-      }
-    });
+    }
+
+    document.addEventListener('keydown', window.hideCardOnEscapeKeyPress);
 
     btnCloseItemElement.addEventListener('click', hideCardItemElement);
-
 
     return cardItemElement;
   };
@@ -79,7 +69,7 @@
       '.popup__title': offer.title,
       '.popup__text--address': offer.address,
       '.popup__text--price ': offer.price + '₽/ночь',
-      '.popup__type': tranformOfferType(offer.type),
+      '.popup__type': OfferType[offer.type],
       '.popup__text--capacity': offer.rooms + ' комнат(ы) для ' + offer.guests + ' гостей(я)',
       '.popup__text--time': 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout,
       '.popup__description': offer.description
@@ -102,6 +92,7 @@
       photosElement.appendChild(createPhotoElement(offer.photos[i]));
     }
 
+    document.addEventListener('keydown', window.hideCardOnEscapeKeyPress)
     window.cardElement.classList.remove('hidden');
   };
 

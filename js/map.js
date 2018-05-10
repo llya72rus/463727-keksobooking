@@ -66,6 +66,10 @@
 
 
   filtersFormElement.addEventListener('change', function () {
+    if (!cachedData) {
+      return
+    }
+
     var updatePins = function () {
       renderPins(window.mapFilter.filterData(cachedData));
     };
